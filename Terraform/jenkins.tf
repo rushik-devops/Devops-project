@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 terraform {
   required_providers {
     aws = {
@@ -32,10 +35,9 @@ data "aws_ami" "ubuntu" {
 
 locals {
 	common_tags = {
-		Name = "jenkins"
+		Name = "jenkins_server" 
 	}
 }
-
 
 
 resource "tls_private_key" "jenkinskey" {
@@ -88,7 +90,7 @@ resource "aws_security_group" "jenkins-sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  tags       = local.common_tags
+  tags = local.common_tags
 }
 
 
@@ -98,7 +100,7 @@ resource "aws_instance" "jenkins" {
   key_name               = aws_key_pair.jenkinshost.key_name
   subnet_id              = aws_subnet.jenkins-subnet.id
   vpc_security_group_ids = [aws_security_group.jenkins-sg.id]
-  tags                   = local.common_tags 
+  tags                   = local.common_tags
 
   user_data = <<-EOF
               #!/bin/bash
